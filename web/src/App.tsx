@@ -6,7 +6,7 @@ import { Modal } from './components/Modal';
 import * as Dialog from '@radix-ui/react-dialog'
 
 function App() {
-  const [TextHidden, setTextHidden] = useState(true)
+  const [TextHidden, setTextHidden] = useState(false)
 
   const showText=()=> setTextHidden(!TextHidden);
 
