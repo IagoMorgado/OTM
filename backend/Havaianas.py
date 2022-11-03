@@ -92,10 +92,10 @@ def havainasModel(dias, alfa):
         result['time'] = solver.wall_time()
         result['iteracoes'] = solver.iterations()
         result['lucro'] = solver.Objective().Value()
-        result['variaveis'] = {}
-        result['produtos'] = {}
+        result['variaveis'] = [0] * n
+        result['produtos'] = [0] * n
         for j in range(n):
-            result['variaveis']['x%i' % j] = x[j].solution_value()
+            result['variaveis'][j] = x[j].solution_value()
             result['produtos'][j] = data['N'][j]
             print(f' - X = {x[j].solution_value()}')
     else:
