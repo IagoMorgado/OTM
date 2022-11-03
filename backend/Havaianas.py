@@ -93,8 +93,10 @@ def havainasModel(dias, alfa):
         result['iteracoes'] = solver.iterations()
         result['lucro'] = solver.Objective().Value()
         result['variaveis'] = {}
-        for j in range(len(data['N'])):
-            result['variaveis']['x[%i]' % j] = x[j].solution_value()
+        result['produtos'] = {}
+        for j in range(n):
+            result['variaveis']['x%i' % j] = x[j].solution_value()
+            result['produtos'][j] = data['N'][j]
             print(f' - X = {x[j].solution_value()}')
     else:
         print('The solver could not find an optimal solution.')
