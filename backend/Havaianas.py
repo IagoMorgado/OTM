@@ -1,11 +1,13 @@
 from asyncio.windows_events import INFINITE
 from ortools.linear_solver import pywraplp
 from flask import Flask
+from flask_cors import CORS
 from flask_restful import Resource, Api, request
 from locale import atof
 import pandas as pd
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 class Havaianas(Resource):
