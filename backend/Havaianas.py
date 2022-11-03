@@ -2,6 +2,7 @@ from asyncio.windows_events import INFINITE
 from ortools.linear_solver import pywraplp
 from flask import Flask
 from flask_restful import Resource, Api, request
+from locale import atof
 import pandas as pd
 
 app = Flask(__name__)
@@ -9,10 +10,6 @@ api = Api(app)
 
 class Havaianas(Resource):
     def get(self):
-        # jeito de ler a tabela de vendas
-        data = pd.read_csv('vendasAnuais.csv')
-        data = data.to_dict()
-        
         # get query Params
         args = request.args
         
@@ -23,23 +20,44 @@ class Havaianas(Resource):
 
 api.add_resource(Havaianas, '/havaiana-otimizacao')
 
-def create_data_model():
+def load_data(data, dias):
+    # jeito de ler a tabela de vendas
+    data_produto = pd.read_csv('produto_infos.csv')
+    data_produto = data_produto.to_dict()
+    data_historico = pd.read_csv('qtd.csv')
+    
+    n = len(data_produto['Produto'])
+    data['N'] = {} # Setando vetor de produtos
+    data['Pr'] = {} # Setando vetor de preços dos produtos
+    data['C'] = {} # Setando vetor de custo de reposicao
+    data['E'] = {} # Setar numero atual de unidades guardadas
+    data['V'] = [0] * n # Inicializar Volume de vendas anterior de cada produto
+    
+    
+    # for para pegar as informações do produto
+    for i in range(n):
+        data['N'][i] = data_produto['Produto'][i]
+        data['Pr'][i] = float(data_produto['Preco_venda'][i])
+        data['C'][i] = float(data_produto['Custo_reposicao'][i])
+        data['E'][i] = data_produto['Qtd_estoque'][i]
+        
+    # for para pegar o historico de venda de cada produto em uma quantidade x dias
+    for i in range(n):
+        produto = data['N'][i]
+        for j in range(dias):
+            data['V'][i] += data_historico[produto][j]
+    
+def create_data_model(dias):
     data = {}
-    #set
-    data['N'] = ["produtoA", "produtoB", "produtoC", "produtoD", "produtoE"]
-    #param
-    data['V'] = [20, 15, 10, 1, 18]
-    data['Pr'] = [19.90, 29.90, 24.90, 89.90, 20.90]
-    data['C'] = [4.90, 7.90, 6.50, 49.90, 5.50]
-    data['Ex'] = [15, 8, 10, 5, 6]
-    data['E'] = [15, 10, 5, 0, 15]
+    load_data(data, dias)
     
     return data
     
 def havainasModel(dias, alfa):
     # Create a solver usando SCIP
     solver = pywraplp.Solver('Maximize lucro da loja de havainas', pywraplp.Solver.SCIP_MIXED_INTEGER_PROGRAMMING)
-    data = create_data_model()
+    data = create_data_model(dias)
+    
     #variables
     infinity = solver.infinity()
     x = {}
@@ -60,7 +78,7 @@ def havainasModel(dias, alfa):
         solver.Add(x[i] + data['E'][i] >= P[i]*dias)
     
     # Objective
-    solver.Maximize(sum(data['Pr'][i] * P[i] * dias - data['C'][i] * x[i] for i in range(len(data['N']))))
+    solver.Maximize(sum(data['Pr'][i] * P[i] * dias - data['C'][i] * x[i] for i in range(n)))
     
     status = solver.Solve()
     
