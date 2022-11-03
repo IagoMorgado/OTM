@@ -19,14 +19,24 @@ export function Modal(){
         event.preventDefault();
         let alfa
         const formData = new FormData(event.target as HTMLFormElement)
-        const data = Object.fromEntries(formData)
+        const form_data = Object.fromEntries(formData)
+        console.log(form_data)
         if(expectation!=undefined){
-            expectation==1 ? alfa=1+(data.percentage/100):alfa=1-(data.percentage/100)
+            expectation=="1" ? alfa=1+(form_data.percentage/100) : alfa=1-(form_data.percentage/100)
         }
-        await axios.get(`http://127.0.0.1:5000/havaiana-otimizacao?dias=${data.days}&espectativa=${alfa}`).then(function(response){
-            setResult(response.data)
+        await axios.get(`http://127.0.0.1:5000/havaiana-otimizacao?dias=${form_data.days}&espectativa=${alfa}`).then(function(response){
+            setResult(response.data.data)
+            
         })
-        console.log(result)
+        if(result!=undefined){
+            let show=[]
+            for(let i=0;i<result?.variaveis.length;i++){
+                show.push(result?.produtos[i] + " "+ result?.variaveis[i]+" unidades \n")
+            }
+            alert("Produtos e quantidades a se adiquirir \n\n"+show)
+        }else{
+            alert("Erro,tente novamente!")
+        }
     }
     return(
         <Dialog.Portal>
@@ -43,13 +53,13 @@ export function Modal(){
                         <div className='flex flex-col gap-2'>
                             <label htmlFor='expectation'>Qual a espectativa para as vendas?</label>
                             <ToggleGroup.Root type='single' className='grid grid-cols-2' value={expectation}onValueChange={setExpectation}>
-                                <ToggleGroup.Item value='1' title='Crescimento' className='w-16 h-8 rounded-full bg-black'>+</ToggleGroup.Item>
-                                <ToggleGroup.Item value='0' title='Queda' className='w-16 h-8 rounded-full bg-black'>-</ToggleGroup.Item>
+                                <ToggleGroup.Item value='1' title='Crescimento' className={`h-8 rounded-full ${expectation!="1"? 'bg-black':'bg-blue-400'}`}>Crescimento</ToggleGroup.Item>
+                                <ToggleGroup.Item value='0' title='Queda' className={`h-8 rounded-full ${expectation!="0"? 'bg-black':'bg-blue-400'}`}>Queda</ToggleGroup.Item>
                             </ToggleGroup.Root>
                         </div>
                         <div className='flex flex-col gap-2'>
                             <label htmlFor="percentage">De quanto?</label>
-                            <input name="percentage"placeholder='10%' type='number' className='text-sm bg-black rounded-sm h-8 px-1'></input>
+                            <input name="percentage" placeholder='10%' type='number' className='text-sm bg-black rounded-sm h-8 px-1'></input>
                         </div>
                     </div>
 
