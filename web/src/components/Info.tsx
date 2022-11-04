@@ -6,8 +6,8 @@ export function Info(){
         <br/>
         <br/>
         Para utilizar o sistema basta preencher o formulário onde o usuário fornece dados como o período que deseja projetar a otimização do estoque, 
-        se existe uma expectativa de queda ou crescimento nas vendas em relção ao mesmo período anterior e qual a porcentagem
-        desta expectativa. Por fim aoselecionar o botão <strong>Otimizar!</strong> uma janela do navegador abrirá e o resultado sera exibido em tela. 
+        se existe uma expectativa de queda ou crescimento nas vendas em relação ao mesmo período anterior e qual a porcentagem
+        desta expectativa. Por fim ao selecionar o botão <strong>Otimizar!</strong> uma janela do navegador abrirá e o resultado sera exibido em tela. 
       </p>    
     )
 }
