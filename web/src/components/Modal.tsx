@@ -1,3 +1,5 @@
+/*Componente não mais utilizado*/
+
 import * as Dialog from '@radix-ui/react-dialog'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import axios from 'axios'
@@ -33,7 +35,7 @@ export function Modal(){
             for(let i=0;i<result?.variaveis.length;i++){
                 show.push(result?.produtos[i] + " "+ result?.variaveis[i]+" unidades \n")
             }
-            alert("Produtos e quantidades a se adiquirir \n\n"+show)
+            alert("Produtos e quantidades a se adquirir \n\n"+show)
         }else{
             alert("Erro,tente novamente!")
         }
